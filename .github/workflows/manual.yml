@@ -1,0 +1,57 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch: # Allow to run this manually
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Generate Java report
+        run: |
+          REPORT_FILE="java-file-report.txt"
+          
+          echo "BANK APPLICATION JAVA REPORT" > $REPORT_FILE
+          echo "Generated on: $(date)" >> $REPORT_FILE
+          echo "----------------------------" >> $REPORT_FILE
+
+          FILE_COUNT=(find . -name "*.java | wc -l")
+          echo "Number of .java files: $FILE_COUNT" >> $REPORT_FILE
+
+          if [ "$FILE_COUNT" -gt 0 ]; then
+            TOTAL_LOC=$(find . -name "*.java" -exec cat {} + | wc -l)
+          else
+            TOTAL_LOC=0
+          fi
+          echo "Total lines of code: $TOTAL_LOC" >> $REPORT_FILE
+          
+          echo "----------------------------" >> $REPORT_FILE
+          echo "Per-file breakdown (Path - Line Count):" >> $REPORT_FILE
+          
+          # 3. Per-file breakdown
+          find . -name "*.java" -exec wc -l {} + | sed '$d' >> $REPORT_FILE
+
+      - name: Upload Report Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-file-report
+          path: java-file-report.txt
+
+
+
+
+
+          
