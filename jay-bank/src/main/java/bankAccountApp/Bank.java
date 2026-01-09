@@ -5,6 +5,7 @@
  */
 package bankAccountApp;
 
+import java.util.logging.Logger;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
  * @author jay
  */
 public class Bank {
+
+	Logger logger = Logger.getLogger(getClass().getName());
 
 	private static ArrayList<BankAccount> Accounts;
 	private final int initialSize = 1000;
@@ -151,7 +154,7 @@ public class Bank {
 
 			}
 		} catch (IOException e) {
-			System.out.println("Error writing to file");
+			logger.info("Error writing to file");
 		} finally {
 			if (osw != null) {
 				try {

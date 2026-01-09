@@ -233,9 +233,8 @@ public class Person {
 	// and returns it.
 	public String toString() {
 		// Store all attribute values in string personInfo
-		String personInfo = getName() + DELIM + getGender() + DELIM + getAge() + DELIM + getHeight() + DELIM
+		return getName() + DELIM + getGender() + DELIM + getAge() + DELIM + getHeight() + DELIM
 				+ getWeight() + DELIM + getHairColor() + DELIM + getEyeColor() + DELIM + getEmail();
-		return personInfo;
 	}
 
 	/**
