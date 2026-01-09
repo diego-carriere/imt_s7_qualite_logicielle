@@ -5,43 +5,58 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_dispatch: # Allows you to run this manually
+  workflow_dispatch:
 
 jobs:
-  build-report:
+  validate-and-report:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Generate Java File Report
+      # 1. Fail if compiled .class files are present
+      - name: Check for .class files
         run: |
-          REPORT_FILE="java-file-report.txt"
-          
-          echo "BANK APPLICATION JAVA REPORT" > $REPORT_FILE
-          echo "Generated on: $(date)" >> $REPORT_FILE
-          echo "----------------------------" >> $REPORT_FILE
-          
-          # 1. Count total number of .java files
-          FILE_COUNT=$(find . -name "*.java" | wc -l)
-          echo "Number of .java files: $FILE_COUNT" >> $REPORT_FILE
-          
-          # 2. Count total lines of code across all .java files
-          # Only counts if files exist to avoid errors
-          if [ "$FILE_COUNT" -gt 0 ]; then
-            TOTAL_LOC=$(find . -name "*.java" -exec cat {} + | wc -l)
-          else
-            TOTAL_LOC=0
+          CLASS_FILES=$(find . -name "*.class")
+          if [ -n "$CLASS_FILES" ]; then
+            echo "ERROR: Compiled .class files were found in the repository!"
+            echo "$CLASS_FILES"
+            exit 1
           fi
-          echo "Total lines of code: $TOTAL_LOC" >> $REPORT_FILE
-          
-          echo "----------------------------" >> $REPORT_FILE
-          echo "Per-file breakdown (Path - Line Count):" >> $REPORT_FILE
-          
-          # 3. Per-file breakdown
-          find . -name "*.java" -exec wc -l {} + | sed '$d' >> $REPORT_FILE
+          echo "Success: No .class files found."
 
+      # 2. Fail if no .java files exist
+      - name: Check for .java files
+        run: |
+          JAVA_FILES=$(find . -name "*.java")
+          if [ -z "$JAVA_FILES" ]; then
+            echo "ERROR: No .java files found in the repository."
+            exit 1
+          fi
+          echo "Success: Java files located."
+
+      # 3. Generate the report
+      - name: Generate java-file-report.txt
+        run: |
+          REPORT="java-file-report.txt"
+          echo "BANK APPLICATION JAVA REPORT" > $REPORT
+          echo "Generated on: $(date)" >> $REPORT
+          echo "----------------------------" >> $REPORT
+          
+          # Count files and total lines
+          FILE_COUNT=$(find . -name "*.java" | wc -l)
+          TOTAL_LOC=$(find . -name "*.java" -exec cat {} + | wc -l)
+          
+          echo "Number of .java files: $FILE_COUNT" >> $REPORT
+          echo "Total lines of code: $TOTAL_LOC" >> $REPORT
+          echo "----------------------------" >> $REPORT
+          echo "Per-file breakdown (Line Count - Path):" >> $REPORT
+          
+          # List per-file breakdown (wc -l output is "count path")
+          find . -name "*.java" -exec wc -l {} + | sed '$d' >> $REPORT
+
+      # 4. Upload the report as an artifact
       - name: Upload Report Artifact
         uses: actions/upload-artifact@v4
         with:
