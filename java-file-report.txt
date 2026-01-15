@@ -1,0 +1,18 @@
+BANK APPLICATION JAVA REPORT
+Generated on: Fri Jan  9 10:33:51 UTC 2026
+----------------------------
+Number of .java files: 11
+Total lines of code: 1619
+----------------------------
+Per-file breakdown (Path - Line Count):
+  228 ./jay-bank/src/test/java/bankAccountApp/PersonTest.java
+   11 ./jay-bank/src/test/java/bankAccountApp/AllTests.java
+  205 ./jay-bank/src/test/java/bankAccountApp/BankAccountTest.java
+  148 ./jay-bank/src/test/java/bankAccountApp/BankTest.java
+   58 ./jay-bank/src/test/java/bankAccountApp/ACHServiceTest.java
+   25 ./jay-bank/src/main/java/bankAccountApp/ACHService.java
+  220 ./jay-bank/src/main/java/bankAccountApp/BankAccountApp.java
+  206 ./jay-bank/src/main/java/bankAccountApp/Bank.java
+  272 ./jay-bank/src/main/java/bankAccountApp/Person.java
+   19 ./jay-bank/src/main/java/bankAccountApp/ACHServiceImpl.java
+  227 ./jay-bank/src/main/java/bankAccountApp/BankAccount.java
